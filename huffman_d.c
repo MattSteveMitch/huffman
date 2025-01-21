@@ -103,7 +103,7 @@ int main() {
     char* filenameC = malloc(sizeof(char) * 140);
     
     printf("Enter file name: ");
-    int filenameLen = getLine(filenameC);
+    getLine(filenameC);
 
     struct string* filename = convert_stringEasy(filenameC);
 
