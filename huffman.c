@@ -55,8 +55,7 @@ int main() {
     struct string* contents = convert_stringEasy(contentsC);
 
     printf("Enter file name: ");
-    scanf("%s", filename);
-    //filename = "imitating_chatGPT.txt";
+    getLine(filename);
 
     in_file = fopen(filename, "rb");
     if (in_file == NULL) {
