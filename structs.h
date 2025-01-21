@@ -363,7 +363,7 @@ void percolateUp(struct heap* self, int startInd) {
 struct heap* newHeap(struct heapNode** vals_in_order, int arrayLen, int max_capac) {
     struct heap* self = malloc(sizeof(struct heap));
 
-    self->array = malloc(sizeof(struct heapNode) * max_capac);
+    self->array = malloc(sizeof(struct heapNode*) * max_capac);
 
     for (int i = 0; i < arrayLen; i++) {
         self->array[i] = vals_in_order[i];
