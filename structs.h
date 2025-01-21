@@ -79,8 +79,6 @@ void shiftToBegin(struct string* buffer, int startInd) {
 
 struct char_and_count* newCC() {
     struct char_and_count* ret_val = malloc(sizeof(struct char_and_count));
-//    ret_val->val = val;
-  //  ret_val->count = count;
     return ret_val;
 }
 
@@ -277,6 +275,17 @@ void swapHeapNode(struct heapNode** array, int ind1, int ind2) {
     struct heapNode* placeholder = array[ind1];
     array[ind1] = array[ind2];
     array[ind2] = placeholder;
+}
+
+int getLine(char* dest) {
+    unsigned char nextInd = 0;
+    for (char nextChar = getc(stdin); nextChar != '\n'; nextInd++) {
+        dest[nextInd] = nextChar;
+        nextChar = getc(stdin);
+    }
+    dest[nextInd] = 0;
+
+    return nextInd;
 }
 
 unsigned int fillString(FILE* in_file, struct string* str, int capac) {
