@@ -103,9 +103,8 @@ int main() {
     char* filenameC = malloc(sizeof(char) * 140);
     
     printf("Enter file name: ");
-    int filenameLen = scanf("%s", filenameC);
+    int filenameLen = getLine(filenameC);
 
-    //filenameC = "imitating_chatGPT_compressed.txt";
     struct string* filename = convert_stringEasy(filenameC);
 
     char* out_fileC = copyString(filename->val, filename->length + 17);
