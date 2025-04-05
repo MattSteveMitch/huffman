@@ -25,25 +25,25 @@ void DFS(struct charTreeNode* tree, char* pathArray, int pathArrayInd, char** en
     return;
 }
 
-void makeNewFileName(struct string* old_name) {
-    unsigned char name_ind = old_name->length - 1;
+char* makeNewFileName(struct string* old_name) {
+    short name_ind = old_name->length - 1;
     struct string* suffix = convert_stringEasy(".huf");
 
-    while (old_name->val[name_ind] != '.') {
+    while (name_ind >= 0 && old_name->val[name_ind] != '.') {
         name_ind--;
     }
+
+    if (name_ind == -1) {
+        name_ind = old_name->length;
+    }
+
+    char* old_extension = copyString(old_name->val + name_ind, 32);
 
     old_name->val[name_ind] = 0;
     old_name->length = name_ind;
     append(old_name, suffix, 1);
-}
 
-char stringLen(char* str) {
-    char ind = 0;
-    while (str[ind] != 0) {
-        ind++;
-    }
-    return ind;
+    return old_extension;
 }
 
 
@@ -140,10 +140,11 @@ int main() {
     compressedC[0] = 0;
     struct string* compressed = convert_stringEasy(compressedC);
 
-    struct string* out_file_name = convert_stringEasy(copyString(filename, stringLen(filename) + 15));
-    makeNewFileName(out_file_name);
+    struct string* out_file_name = convert_stringEasy(copyString(filename, CstringLen(filename) + 4));
+    char* old_extension = makeNewFileName(out_file_name);
 
     FILE* out_file = fopen(out_file_name->val, "wb");
+    fwrite(old_extension, 1, CstringLen(old_extension) + 1, out_file);
 
     free(out_file_name->val);
     free(out_file_name);
@@ -153,7 +154,7 @@ int main() {
     
     for (ind = 0; ind < 256; ind++) {
         if (charCount[ind].count > 0) {
-            encodingLen = stringLen(encodingMap[ind]);
+            encodingLen = CstringLen(encodingMap[ind]);
             append(bin_buffer, convert_string(char_as_binary_str(ind), 8), 2);
             append(bin_buffer, convert_string(char_as_binary_str(encodingLen), 8), 2);
             append(bin_buffer, convert_string(encodingMap[ind], encodingLen), 1);
