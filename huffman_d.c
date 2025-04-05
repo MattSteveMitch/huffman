@@ -88,7 +88,6 @@ void releaseVals(void* ptr1, void* ptr2, void* ptr3, void* ptr4, void* ptr5, voi
 
 char getSuffixInd(struct string* fileName) {
     unsigned char dotInd = fileName->length - 1;
-    char* pattern = "_compressed.txt";
 
     while (fileName->val[dotInd] != '.') {
         dotInd--;
@@ -107,17 +106,13 @@ int main() {
 
     struct string* filename = convert_stringEasy(filenameC);
 
-    char* out_fileC = copyString(filename->val, filename->length + 17);
+    char* out_fileC = copyString(filename->val, filename->length + 45);
     struct string* out_file_name = convert_string(out_fileC, filename->length);
 
     char suffixInd = getSuffixInd(filename);
     
     out_file_name->val[suffixInd] = 0;
     out_file_name->length = suffixInd;
-
-    struct string* appendage = convert_string("_decompressed.txt", 17);
-
-    append(out_file_name, appendage, 1);
     
     FILE* in_file = fopen(filename->val, "rb");
     if (in_file == NULL) {
@@ -134,18 +129,36 @@ int main() {
     }
 
     char* rawBufferC = malloc(65);
-    int bufferBM = 0;
     char* decompressedC = malloc(513);
     decompressedC[0] = 0;
     unsigned char nextChar;
     unsigned char nextLen;
 
-    int numberRead = fread(rawBufferC, 1, 64, in_file);
+    int numberRead = fread(rawBufferC, 1, 32, in_file); // Enough characters to 
+    // know you've got the entire prepended file extension
+
     struct string* rawBuffer = convert_string(rawBufferC, numberRead);
     struct string* decompressed = convert_string(decompressedC, 0);
+    char* file_extension = copyString(rawBuffer->val, 33);
+
+    int bufferBM = CstringLen(file_extension) + 1;
+    int extraChars = bufferBM; // How many extra characters are needed to store the 
+    // file extension of the decompressed file, at the beginning of the compressed file
+
+    shiftToBegin(rawBuffer, bufferBM); // Erase the file extension from the beginning
+    bufferBM = 0;
+
+    numberRead = fread(rawBuffer->val + 32 - extraChars, 1, extraChars + 32, in_file);
+    // Fill up rawBuffer the rest of the way to capacity
+
+    rawBuffer->length += numberRead;
+
+    struct string* appendage = convert_string("_decompressed", 13);
+    append(out_file_name, appendage, 1);
+    append(out_file_name, convert_string(file_extension, extraChars - 1), 2);
 
     unsigned char max_nulls = 1;
-    if (rawBuffer->val[0] == 0) {
+    if (rawBuffer->val[bufferBM] == 0) {
         max_nulls = 2;
     }
 
@@ -214,7 +227,7 @@ int main() {
         printf("Couldn't open file\n");
         return 1;
     }
-
+    
     free(out_file_name->val);
     free(out_file_name);
 
@@ -287,5 +300,4 @@ int main() {
 
         decomprBM += nextLen;
     }
-
 }
