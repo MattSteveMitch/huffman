@@ -77,6 +77,14 @@ void shiftToBegin(struct string* buffer, int startInd) {
     buffer->length -= startInd;
 }
 
+char CstringLen(char* str) {
+    char ind = 0;
+    while (str[ind] != 0) {
+        ind++;
+    }
+    return ind;
+}
+
 struct char_and_count* newCC() {
     struct char_and_count* ret_val = malloc(sizeof(struct char_and_count));
     return ret_val;
